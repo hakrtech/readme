@@ -1,0 +1,117 @@
+How to install OpenBSD source and recompile the whole system
+------------------------------------------------------------
+
+0. install virtualbox from virtualbox.org
+
+1. install openbsd amd64 iso on virtual box from hakrtech
+   Need a separate document for this.
+   a. select install not autoinstall
+   b. select autolayout
+   c. select yes when asked to proceed without verifying 
+   d. remember to remove the iso file from the cd drive in virtualbox and then reboot.
+      otherwise after reboot the install will happen again. :-) you do not want that.
+
+2. configure doas 
+ 
+ $ su -
+ # echo "permit nopass dinesh" > /etc/doas.conf
+ # exit
+ $ doas id
+
+note: replace dinesh with your username
+
+3. install git
+ 
+ $ echo https://ftp.openbsd.org/pub/OpenBSD | doas tee /etc/installurl
+ $ doas pkg_add -vv git
+
+3a. configure git
+
+ $ git config --global user.name "Your Full Name"
+ $ git config --global user.email "your@email.address"
+
+Note: Kindly replace "Your Full Name" with your full name. And kindly replace your email address with your email address.  
+
+3b. install nano
+ $ doas pkg_add -vv nano
+
+3c. install firefox
+ 
+ $ doas pkg_add -vv firefox
+
+4. get openbsd source from hakrtech, so you have my scripts
+
+ $ cd /usr
+ $ doas git clone -b hakr --depth 100 https://github.com/hakrtech/src.git
+ $ doas chown -R $USER /usr/src
+
+5. get x windows source
+
+ $ cd /usr
+ $ doas git clone --depth 100 https://github.com/openbsd/xenocara.git
+ $ cd xenocara
+ $ doas chown -R $USER /usr/xenocara
+
+6. get ports source
+ 
+ $ cd /usr
+ $ doas git clone --depth 100 https://github.com/openbsd/ports.git
+ 
+8. build kernel and install it
+
+ $ cd /usr/src
+ $ doas ./mkkern.sh
+ $ doas reboot
+
+9a. build base system
+
+ $ cd /usr/src
+ $ doas ./mkbase.sh
+
+9b. build base faster (use instead of 9a)
+ 
+ $ cd /usr/src
+ $ doas ./mkrebase.sh
+
+10. build x windows
+
+ $ cd /usr/src
+ $ doas ./mkxeno.sh
+
+congrats you have recompiled the whole system.
+
+you can update to the latest source and recompile the system
+
+11. update the kernel
+
+ $ cd /usr/src
+ $ doas chown -R $USER /usr/src # you should write perms anywhere under /usr/src
+ $ git pull origin hakr        # this gets latest source
+ $ doas ./mkkern.sh            # this compiles and installs the latest kernel
+ $ doas reboot                 # you need to reboot to start using the new kernel
+
+12. update base
+ $ cd /usr/src
+ $ doas chown -R $USER /usr/src # ensure you have permission to write under /usr/src
+ $ git pull origin master
+ $ doas /usr/src/mkrebase.sh   # recompile the base system and install it
+
+13. update x windows
+ $ cd /usr/xenocara
+ $ doas chown -R $USER /usr/xenocara # ensure you can write in /usr/xenocara
+ $ git pull origin master
+ $ doas /usr/src/mkxeno.sh     # compile x windows and install it
+
+you now have a very good development environment, where you can easily update
+a. kernel
+b. base utilities
+c. x windows, 
+d. and 3rd party packages
+by compiling latest source! 
+
+now enjoy programming your application and/or modify any part of the system.
+
+have fun.
+
+thanks
+-dinesh
