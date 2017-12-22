@@ -39,11 +39,17 @@ Note: Kindly replace "Your Full Name" with your full name. And kindly replace yo
  
  $ doas pkg_add -vv firefox
 
-4. get openbsd source from hakrtech, so you have my scripts
+4. get openbsd source from hakrtech, so you have my installation modification
 
  $ cd /usr
- $ doas git clone -b hakr --depth 100 https://github.com/hakrtech/src.git
+ $ doas git clone --depth 1 https://github.com/hakrtech/src.git
  $ doas chown -R $USER /usr/src
+
+4a. get my scripts
+
+ $ cd /usr
+ $ doas git clone https://github.com/hakrtech/reladm.git
+ $ doas chown -R $USER /usr/reladm
 
 5. get x windows source
 
@@ -60,23 +66,23 @@ Note: Kindly replace "Your Full Name" with your full name. And kindly replace yo
 8. build kernel and install it
 
  $ cd /usr/src
- $ doas ./mkkern.sh
+ $ doas /usr/reladm/mkkern.sh
  $ doas reboot
 
 9a. build base system
 
  $ cd /usr/src
- $ doas ./mkbase.sh
+ $ doas /usr/reladm/mkbase.sh
 
 9b. build base faster (use instead of 9a)
  
  $ cd /usr/src
- $ doas ./mkrebase.sh
+ $ doas /usr/reladm/mkrebase.sh
 
 10. build x windows
 
  $ cd /usr/src
- $ doas ./mkxeno.sh
+ $ doas /usr/reladm/mkxeno.sh
 
 congrats you have recompiled the whole system.
 
@@ -86,21 +92,21 @@ you can update to the latest source and recompile the system
 
  $ cd /usr/src
  $ doas chown -R $USER /usr/src # you should write perms anywhere under /usr/src
- $ git pull origin hakr        # this gets latest source
- $ doas ./mkkern.sh            # this compiles and installs the latest kernel
+ $ git pull origin master        # this gets latest source
+ $ doas /usr/reladm/mkkern.sh            # this compiles and installs the latest kernel
  $ doas reboot                 # you need to reboot to start using the new kernel
 
 12. update base
  $ cd /usr/src
  $ doas chown -R $USER /usr/src # ensure you have permission to write under /usr/src
  $ git pull origin master
- $ doas /usr/src/mkrebase.sh   # recompile the base system and install it
+ $ doas /usr/reladm/mkrebase.sh   # recompile the base system and install it
 
 13. update x windows
  $ cd /usr/xenocara
  $ doas chown -R $USER /usr/xenocara # ensure you can write in /usr/xenocara
  $ git pull origin master
- $ doas /usr/src/mkxeno.sh     # compile x windows and install it
+ $ doas /usr/reladm/mkxeno.sh     # compile x windows and install it
 
 you now have a very good development environment, where you can easily update
 a. kernel
